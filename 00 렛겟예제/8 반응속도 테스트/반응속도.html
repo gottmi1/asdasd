@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>반응속도</title>
+  
+  <style>
+    #screen{
+      width: 500px;
+      height: 500px;
+      text-align: center;
+      user-select: none;
+    }
+    #screen.waiting{
+      background-color: aqua;
+    }
+    #screen.ready{
+      background-color: red;
+      color: white;
+    }
+    #screen.now{
+      background-color: greenyellow;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="screen" class="waiting"></div>
+  <div id="result"></div>
+
+  <script>
+    const $screen = document.querySelector('#screen');
+    const $result = document.querySelector('#result');
+
+    // console.log(Math.floor(Math.random() * 1000 ) + 2000);
+
+    let startTime;
+    let endTime;
+    const records = [];
+    let timeoutId;
+    const fast = [];
+
+    $screen.addEventListener('click' , () => {
+      if ($screen.classList.contains('waiting')) { //대기화면
+        $screen.classList.remove('waiting');
+        $screen.classList.add('ready');
+        $screen.textContent = '초록색이 되면 클릭하세요.';
+        timeoutId = setTimeout(() => {
+          startTime = new Date();
+          $screen.classList.remove('ready');
+          $screen.classList.add('now');
+          $screen.textContent = '클릭하세요';
+        },Math.floor(Math.random() * 1000 ) + 2000); // 2000~3000사이의 수
+      } else if ($screen.classList.contains('ready')) { //준비화면
+        clearTimeout(timeoutId);
+        $screen.classList.remove('ready');
+        $screen.classList.add('waiting');
+        $screen.textContent = '왤케 급함?'
+      } else if ($screen.classList.contains('now')) { // 클릭화면
+        endTime = new Date();
+        const current = endTime - startTime;
+        records.push(current);
+        const average = records.reduce((a,c) => a + c) / records.length; //reduce는 배열의 값들을 하나의 새로운 값으로 합치는 메서드임.
+        $result.textContent = `현재 ${current}ms, 평균 ${average}ms`;
+        console.log(current);
+        console.log(average);
+        fast.push(records);
+        console.log(fast);
+        startTime = null;
+        endTime = null;
+        $screen.classList.remove('now');
+        $screen.classList.add('waiting');
+        $screen.textContent = '클릭해서 시작하세요';
+      }
+    });
+
+    //reduce 형식
+    // 배열.reduce((누적값 , 현재값 ) => {
+    // return 새로운 누적값; 
+    // }) 초기값이 없으면 배열의 첫 번쨰 요소가 초기값이 됨.
+  </script>
+</body>
+</html>
