@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #screen{
+      width: 500px;
+      height: 500px;
+      text-align: center;
+      user-select: none;
+    }
+    #screen.waiting{
+      background-color: aqua;
+    }
+    #screen.ready{
+      background-color: red;
+      color: white;
+    }
+    #screen.now{
+      background-color: greenyellow;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="screen" class="waiting">클릭해서 시작하세요</div>
+  <div id="result"></div>
+
+  <script>
+    const $screen = document.querySelector('#screen');
+    const $result = document.querySelector('#result');
+    //이벤트리스너, 타이머는 비동기임
+    const records = [];
+    let stratTime;
+    let endTime;
+    let timeoutId
+    // let 을 지역변수로 설정하면 블록 스코프 및 이런저런 문제가 있을 수 있기때문에 전역으로 써주는 것이 가장 좋다.
+    $screen.addEventListener('click', (event) => {
+    if ( $screen.classList.contains('waiting') ) {
+      event.target.classList.replace('waiting' , 'ready');
+      event.target.textContent = '초록색이 되면 클릭하세요';
+      timeoutId = setTimeout(function() {
+        stratTime = new Date();
+        event.target.classList.replace('ready' , 'now');
+        event.target.textContent = '클릭하세요';
+      }, Math.floor(Math.random() * 1000) + 2000);
+      // 시작한 시간 재기시작해야함
+    } else if ( $screen.classList.contains('ready') ) {
+      clearTimeout(timeoutId);
+      $screen.classList.replace('ready' , 'waiting');
+      $screen.textContent = '너무 성급하시네요'
+    } else if ( $screen.classList.contains('now') ) {
+      endTime = new Date();
+      const current = endTime - stratTime;
+      records.push(current);
+      const average = records.reduce((a,c) => a + c) / records.length;
+      $result.textContent = `${current}ms 평균 : ${average}ms`;
+      stratTime = null;
+      endTime = null;
+      event.target.classList.replace('now' , 'waiting');
+      event.target.textContent = '클릭해서 시작하세요';
+      // 시간 차이 저장하기
+    }
+    })
+    
+    // reduce 메서드 (중요)★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+    // reduce를 이용해서 forEach나 map findIndex includes indexOf등 구현할 수 있는게 많음
+    //  ex ) [1, 2, 3, 4].reduce((a,c) => (a+c) , 초기값자리); 결과 : 10. a = 초기값 c = 누적값, 1,2 = 3,3 = 6,4 = 10 피보나치 수열 생각하면 편함 초기값을 안 넣으면 첫번째 자리가 초기값이 됨
+    // reduce는 반환값이 undefined기 떄문에 리턴값을 꼭 줘야함 ((a,c) => a+c ) 이렇게 사용할 수 있는 건 괄호끼리 만나면 리턴을 생략할 수 있는 화살표 함수와 같은 개념으로 이해하면 될 것 같음
+
+
+    </script>
+</body>
+</html>

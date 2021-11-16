@@ -63,10 +63,10 @@
         const current = endTime - startTime;
         records.push(current);
         const average = records.reduce((a,c) => a + c) / records.length; //reduce는 배열의 값들을 하나의 새로운 값으로 합치는 메서드임.
-        $result.textContent = `현재 ${current}ms, 평균 ${average}ms`;
+        $result.textContent = `현재 ${current}ms, 평균 ${average}ms, 상위 5번의 기록은 ${fast[1,2,3,4,5]}입니다.`;
         console.log(current);
         console.log(average);
-        fast.push(records);
+        fast.push(records.slice(0,5).sort((a , b ) => a - b));
         console.log(fast);
         startTime = null;
         endTime = null;
