@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쿵쿵따</title>
+</head>
+<body>
+  <div><span id="order">1</span>번쨰 참가자</div>
+  <div>제시어: <span id="word"></span></div>
+  <input type="text">
+  <button>입력</button>
+
+
+  <!-- 
+쿵쿵따 설계도
+
+1. 몇명이 참여할지 정한다 
+
+1-1. 해당 숫자를 number로 받음
+1-2. number가 0일경우(취소를 눌러도 0 반환) 그냥 하지마 얼럿창을 띄움
+                                                           
+2. 첫 사람이 제시어를 말한다(3글자만 가능하게) 3글자만 가능하게 하는 게 안됨
+2-1. #order 숫자에 +1을 하며 다음사람에게 넘어감
+2-2 세글자가 아니니까 다시 입력하라고함
+
+3. 이어가다 마지막 참가자 차례
+3-1. 조건에 맞는 단어를 입력했으면 #order숫자는 처음으로 돌아감
+3-2. 2-2와 같음
+
+2-2,3-2 안댐
+ -->
+  <script>
+    const $input = document.querySelector('input');
+    const $word = document.querySelector('#word');
+    const $order = document.querySelector('#order');
+    const $button = document.querySelector('button');
+    let word;
+    let newWord;
+    let leng;
+    console.log(leng);
+    
+    const number = Number(prompt('몇 명이 참가하나요?'));
+    console.log(number);
+
+
+    if(number == 0) {
+      alert('인풋 버튼 압수');
+      $input.style.display = "none";
+      $button.style.display = "none";
+    }
+
+    
+
+
+    const onClick = () => {
+      if ( !word || word[word.length - 1] === newWord[0]) {
+        word = newWord;
+        $word.textContent = word;
+        const order = Number($order.textContent);
+        let leng = newWord.length;
+        
+          if( order + 1 > number) {
+          $order.textContent = 1;
+          console.log(leng);
+        } else {
+          $order.textContent = order + 1;
+          console.log(leng);
+        }
+      } else if (leng == undefined) {
+            alert('입력하라고');
+          } 
+      else {
+        alert('올바르지 않음');
+      }//겉 이프
+      $input.value = '';
+      $input.focus();
+    }//이벤트
+
+    const onInput = (event) => {
+    newWord = event.target.value; //입력한 단어를 현재 제시어로
+    }
+    $button.addEventListener('click' , onClick);
+    $input.addEventListener('input', onInput);
+
+  </script>
+</body>
+</html>

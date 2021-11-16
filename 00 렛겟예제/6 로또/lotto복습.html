@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  .ball {
+    display: inline-block;
+    border:  1px solid black;
+    border-radius: 20px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    text-align: center;
+    margin-right: 20px;
+  }
+</style>
+</head>
+<body>
+<div id="result">추첨 결과는 ? </div>
+<div id="bonus">보너스: </div>
+
+<script>
+
+  //아래 알고리즘은 피셔-예이츠 셔플(Fishuer-Yates Shuffle)이라고 함. 모든 숫자를 랜덤으로 섞이게 하는 알고리즘
+
+  const candidate = Array(45).fill().map((v,i) => i + 1); // v가 들어간 자리가 element자리고 여기서 v라는 매개변수는 쓰이지 않았는데 왜 들어간걸까
+  // 요소가 45개인 빈 배열은 선언 후 fill.map을 사용해 인덱스값 +1을 넣어줌(candidate[0]이 1이 될 수 있도록
+  const shuffle = []; //candidate의 요소가 무작위로 들어갈 배열을 선언
+  while (candidate.length>0) { //candidate의 길이가 1이 될 때 까지 아래 내용을 반복
+    const random = Math.floor(Math.random() * candidate.length) //무작위 인덱스 뽑기 caididae의 숫자만 조정하면 건들 필요 없게 만듬
+    const spliceArray = candidate.splice(random, 1); //위의 무작위 값을 condidate에서 빼서 spilceArray에 넣어주는 과정
+    const value = spliceArray[0]; // spliceArray배열의 index[0]을 value라는 변수로 지정
+    shuffle.push(value); // 위 값을 shuffle배열에 넣어줌
+  } // random이라는 변수로 숫자를 무작위로 뽑고 -> 그 수를 cadidate에서 spliceArray로 가져온 후 -> spliceArray에 들어간 값을 다시 shuffle에 넣어줌
+  //결과적으로 shuffle에 1~45가 무작위로 들어가게 해주는 과정
+  console.log(shuffle);
+
+  // 위의 와일문을 for문으로 바꾸는 법
+  // for (let i = candidate.length; i > 0; i--) {
+  //   const random = Math.floor(Math.random() * i);
+  //   const spliceArray = candidate.splice(random, 1);
+  //   const value = spliceArray[0]; 
+  //   shuffle.push(value);
+  // } // 결론 : while문은 조건이 간단하면 쓰기가 편하고 조건이 복잡할 땐 for문이 좋다. 
+  // 팁 : while은 내가 몇 번 반복할지 정확히 모를 떄 쓰기 좋다. for문은 내가 몇번 반복해야하는지 횟수, 처음과 끝을 알아야 하기 때문
+  // 팁2: 만약 while문에 증감연산자가 들어가겠다 싶으면 그냥 for문을 쓰는 게 좋음
+
+  // 배열 원본이 안 변하는 메서드 : map과 slice는 복사해서 가져오는 느낌이고 splice같은 건 잘라서 가져옴 slice(시작요소, 끝요소) 인데, 시작요소는 포함하고 끝 요소는 포함하지않음.
+  // ※주의 splice는 (시작할 인덱스, 그로부터 몇 개)인데 slice는 (시작할 인덱스, 끝 인덱스)임 slice 끝 요소에 -1을 쓰면 뒤에서부터 한개, -(숫자)로 뒤에서부터도 셀 수 있음
+  //sort메서드를 사용할 경우 원본이 수정됨. 문제가 될 요지가 있다. 그래서 array.slice()으로 똑같은 걸 가져와서 거기에다가 sort하는 걸 추천
+  //팁 3: 사전순 정렬을 하고싶다면 sort((a,b) => a.localeCompare(b))를 사용하면됨. 내림차순은 a와b순서를 바꿔주면 됨.
+
+  const winBalls = shuffle.slice(0, 6).sort((a,b) => a - b); // shuffle에서 0번 인덱스부터 5번 인덱스까지 복사한 후 그걸 sort하고 오름차순으로 정렬한 걸 변수 winBalls에 넣음
+  const bonus = shuffle[6]; // 변수 bonus에는 shuffle의 6번 인덱스를 넣음
+  console.log(winBalls, bonus);
+  
+  const $result = document.querySelector('#result');
+  const $bonus = document.querySelector('#bonus');
+
+  const showBall = (number, $target) =>{ // 매개변수의 이름은 딱히 상관이 없음. a여도 됨
+    const $ball = document.createElement('div');
+    $ball.className = 'ball';
+    $ball.textContent = number;
+    $target.appendChild($ball);
+    // 셀프체크
+    if ( $ball.textContent >= 40) {
+      $ball.style.backgroundColor = "green";
+      $ball.style.color = "white"
+    } else if ($ball.textContent < 40 && $ball.textContent >= 30 ) {
+      $ball.style.backgroundColor = "blue";
+      $ball.style.color = "white"
+    } else if ($ball.textContent < 30 && $ball.textContent >= 20) {
+      $ball.style.backgroundColor = "yellow";
+    } else if ($ball.textContent < 20 && $ball.textContent >= 10 ) {
+      $ball.style.backgroundColor = "orange";
+    } else if ($ball.textContent < 10) {
+      $ball.style.backgroundColor = "red";
+      $ball.style.color = "white"
+    }
+    // 셀프체크
+  }; 
+  //$ball이라는 div를 만들어주고, 거기에 ball이라는 클래스 네임을 붙임. #ball에 들어가는 내용은 winBalls의 인덱스. 그 후 result가 출력할 수 있도록 어펜드차일드를 해줌
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+      showBall(winBalls[i], $result);
+    }, (i+1) * 1000); // [0,1,2,3,4,5]를 [1000,2000,3000,4000,5000,6000]으로 바꿔줌
+  }
+  setTimeout(() => {
+      showBall(bonus, $bonus);
+    }, 7000);
+
+    
+
+  // setTimeout(() => {
+  //   showBall(winBalls[0], $result);
+  // }, 1000); 
+  // // 중복되는 부분은 콜백함수로 뺴버리고 매개변수를 줘서 중복을 해소할 수 있다.
+  // //이대로 복사해서 값만 바뀐 여러개를 만들면 편하지만 중복코드가 되기떄문에 바꿔줘야함... 
+
+  //closer,scope - var와 let의 차이 *클로저 문제란 함수와 함수 바깥의 있는 변수의 문제. var와 비동기(셋인터벌, 셋타임아웃등)가 만나면 벌어진다.
+
+  // 일반적으로 let을 쓰는게 좋고 var는 사실상 더 이상 쓸 필요가 없지만 과거에 작성된 코드들을 볼 때 var가 필요할 때가 있음.
+  // var는 함수 스코프를 가졌고 const,let은 블록 스코프를 가졌다. 스코프란 변수에 접근 가능한 범위
+
+  // 함수 스코프 ex
+  // function b() {
+  //   var a = 1;
+  // }
+  // console.log(a);
+  //이거 에러 뜸 var는 함수 스코프이기때문에 함수 밖에서 부르면 접근이 안 되는 거임 var도 함수 안 혹은 바깥의 모든 접근을 차단함
+  
+  // 블록스코프는 블록 바깥에서의 접근이나 바깥으로의 접근을 차단함 블록 안에 고정됐다고 할 수 있음. 그래서 for,while등의 괄호와 사용할 때 이상이 없는 것
+  // for문은 동기이고 settimeout은 비동기임 ★결론 : 걍 let써라
+
+  
+
+
+
+
+
+
+</script>
+</body>
+</html>
