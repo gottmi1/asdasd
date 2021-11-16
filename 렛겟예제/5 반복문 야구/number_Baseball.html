@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숫자야구</title>
+</head>
+<body>
+  
+  <!-- button에 이벤트를 달지 않고 form에 submit을 달면 엔터를 눌러도 값 제출 가능 -->
+  <form action="" id="form">
+    <input type="text" id="input">
+    <button>확인</button>
+
+  </form>
+  <div id="logs"></div>
+  
+  <script>
+
+    const $form = document.querySelector('#form');
+    const $input = document.querySelector('#input');
+    const $logs = document.querySelector('#logs');
+
+    console.log(Math.floor(Math.random() * 9 + 1));
+    // Math.random() : 0 < x < 1 의 모든 숫자가 랜덤으로 나옴
+    // Math.random() * 9 + 1 : 1 < x < 10 의 모든 숫자가 랜덤으로 나옴
+    // Math.floor() 괄호 안의 수를 내림해 자연수로 만들어줌, 올림은 Math.ceil() 
+    // Math.floor(Math.random() * 9 + 1) : 1 < x < 10 의 자연수가 랜덤으로 나옴(이 때 내림이기떄문에 1도 나올수가 있음.))
+
+    const numbers = [];
+    for (let n = 1; n <= 9; n = n + 1) {
+      numbers.push(n);
+    }
+    console.log(numbers);
+
+    const answer = [];
+    // answer라는 배열을 만들고
+    for (let n = 0 ; n <= 3; n += 1) { // 0부터 3까지 4번 반복
+      const index = Math.floor(Math.random() * numbers.length); // numbers의 길이가 줄어듬에따라 대응하게 해준다
+      // index를 무작위로 정해준다
+      answer.push(numbers[index]);
+      //numbers[index]로 실제 숫자를 가져온 후 answer배열에 push해줌 number안에는 1~9가 들어있음
+      numbers.splice(index, 1);
+      // numbers에 spilice를 해줌으로서 방금 꺼내온 숫자는 numbers[]안에서 제외
+    } 
+    // const index = Math.floor(Math.random() * 9;);를 쓰게 될 경우
+    // 가끔 undefined가 뜨는 이유는 0에서 8까지의 숫자를 뽑는데 한 번 뽑을 때 마다 숫자가 하나씩 줄어들기 때문이다. 그래서 numbers.length를 곱해줘 줄어드는 길이에 대응해줘야 함 
+
+    console.log(answer);
+
+    const tries = [];
+    function checkInput(input) {
+      if (input.length !== 4) { //길이 값이 4가 아닐 경우
+        return alert('4자리 숫자만 입력 가능');
+      }
+      if (new Set(input).size !== 4) {
+        return alert('중복된 숫자가 있다');
+      }
+      if (tries.includes(input)) {
+        return alert('이미 입력한 값이다');
+      }
+      return true;
+    }
+    // 검사를 통과하면 true를 반환하고 실패하면 false를 반환함 if문이 제대로 작동하고 있는지 확인하기 위함
+    // alert함수는 기본적으로 undefined를 반환하는데 이는 return undefined와 같음. undefined는 if문에서 false를 반환하므로 결과가 같음.(이 부분은 언어적 특성이므로 복잡하다면 alert후 return false를 해도 좋음)
+    // 이미 시도한 값들을 tries 배열에 넣어두고(문자열로) 배열 안에 요소가 존재하는지 알려주는 .includes로 처리함.
+    // 중복에서 사용되는 Set은 중복을 허용하지 않는 특수한 배열임. new는 예약어로, 10장에서 설명할 예정
+    // new Set ('1231');을 하면 내부에는 1,2,3만 들어간다 이를 통해 Set의 요소 개수를 세면 중복된 값이 있는지 검사할 수 있다. 중복이 아니면 4가 나오지만 중복이 있다면 4미만이 나올테니까
+    // Set의 요소 개수를 구할 떄는 length가 아닌 size를 사용한다.
+
+    $form.addEventListener('submit' , (event)=> {
+      event.preventDefault();
+      const value = $input.value;
+      $input.value = '';
+      const valid = checkInput(value);
+      // event.preventDefault : form태그의 기본 동작을 취소하는 이벤트. form은 submit시 창을 새로고침하는데 그것을 지워준 것
+      // 입력한 값은 $input.value로 가져옴 이 때 숫자가 아니라 문자열로 들어옴
+      // 이 값은 checkInput함수로 검증한다. 검증해야하는 ★내용은 4글자인가, 중복된 숫자는 없는가, 이미 시도했던 값인가★
+      if (!valid) return;
+      if (answer.join() === value) {
+        $logs.textContent = '홈런ㄷㄷㄷㄷ';
+        return;
+      } //answer.join값이 value(입력과 같다면)와 같다면 홈런
+      if (tries.length >= 9) {
+        const msg = document.createTextNode(`패배! 정답은 ${answer.join('')}임 ㅋㅋ`);
+        $logs.appendChild(msg);
+        return;
+        } // answer배열에 들어이는 값이 [1,2,3,4] 일때 answer.join('')을 하면 '1234'라는 문자열이 됨. 이 값을 value와 비교해서 홈런인지 판단 가능
+          // 10번의 기회를 다 날리면 패배하는데, 이는 tries.length가 9 이상인지 검사하면 알 수 있기 때문에 미리 만들어져 있는 값을 재활용한다.
+          //  
+      })
+
+    
+
+
+
+  </script>
+</body>
+</html>
