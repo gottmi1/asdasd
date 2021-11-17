@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    table{
+      border-collapse: collapse;
+    }
+
+    td{
+      border: 1px solid black;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- 요소는 JavaScript로 제작할 것이기 떄문에 만들지 않음. -->
+
+  <script>
+    
+
+    const { body } = document; // const body = document.body;와 같은 값, 최신 문법임. 구조분해할당, 어떤 객체의 속성과 그 속성을 변수에 담는 변수명이 같을 떄 쓰임
+    const $result = document.createElement('div');
+    const $table = document.createElement('table');
+    const rows = [];
+    let turn = 'O';
+
+
+    const callback = (event) => {
+      // 칸에 글자가 이미있나?
+      if ( event.target.textContent ) return; // 클릭이 되면 안되는 부분에선 리무브이벤트 리스너를 써도 되지만 if(조건)return으로 조건에 해당하지 않으면 바로 끝내버리는 게 더 간편함. 이벤트 타겟에 텍스트컨텐츠가 이미 있는 상황이면 아래 코드를 실행하지 말고 바로 리턴해주라는 의미임.
+        event.target.textContent = turn;
+        // if ( turn === 'O') { // 턴이 일 때 X로 변경, X일 때 ,O로 변경
+        //   turn = 'X';
+        // } else if (turn === 'X') {
+        //   turn = 'O';
+        // }    아래처럼 줄일 수 있음.
+        turn = (turn === 'O' ? 'X' : 'O');
+      }
+
+    for (let i = 0; i < 3; i++) { // 반복문을 할땐 줄을 먼저 그 안에 셀
+      const $tr = document.createElement('tr');
+      const cells = [];
+      for (let j = 0; j < 3; j++) {
+        const $td = document.createElement('td');
+        cells.push($td);
+        $tr.append($td);
+      }
+      rows.push(cells);
+      $table.append($tr);
+    }
+    $table.addEventListener('click', callback)
+
+    body.append($table);
+    body.append($result);
+    //forEach문 보다 for문이 훨씬 친숙하기 때문에 for문을 쓰는 게 좋을 것 같다.
+
+
+
+
+  </script>
+</body>
+</html>
