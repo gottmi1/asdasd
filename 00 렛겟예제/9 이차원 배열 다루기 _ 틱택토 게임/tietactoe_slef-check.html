@@ -133,8 +133,30 @@
         $result.textContent = '무승부데스';
         return;
       }
-      turn = (turn === 'O' ? 'X' : 'O');
-      }
+      turn = (turn === 'X' ? 'O' : 'X');
+      if (turn === 'X') {
+        setTimeout(() => {
+          const empty = rows.flat().filter((v) => !v.textContent); //filter는 조건을 선택하면 조건에 해당할 때 여기에 넣어줌 v는 매개변수이고 v.textContent는 textContent가 있을 때를 뜻하므로 !v.textContent
+          //랜덤으로 선택하게 해줌
+          const randomCell = empty[Math.floor(Math.random() * empty.length)]; //빈 칸을 확인
+          const hasWinner= checkWinner(randomCell)
+          randomCell.textContent = 'X';
+          // 승자 확인 //무승부 확인
+          if(hasWinner) {
+            $result.textContent = `${turn}님의 승리!`;
+            return;
+          }  
+          const draw = rows.flat().every((cell) => cell.textContent);
+          if (draw){
+            $result.textContent = '무승부데스';
+            return;  
+          }
+          //턴 다시 넘김
+          turn = (turn === 'X' ? 'O' : 'X');
+          }, 1000);
+          // 빈 칸을 확인
+        }
+      };
 
     for (let i = 0; i < 3; i++) { // 반복문을 할땐 줄을 먼저 그 안에 셀
       const $tr = document.createElement('tr');
