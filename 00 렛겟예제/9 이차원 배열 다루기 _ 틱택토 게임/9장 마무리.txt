@@ -2,13 +2,14 @@
 
   배열 안에 배열이 있을 때 그것을 이차원 배열이라고 한다.
   배열이 몇 중첩이 되었느냐에 따라 몇 차원배열인지가 정해진다.
-  표와 비슷한 모양이서 실무에서 많이 사용함.
+  표와 비슷한 모양으로 실무에서 많이 사용함.
 
     표) [
       [null, 'x', null],
       ['x' , null, 'x'],
       [null, 'o' , 'x'],
     ]
+
 
 2. 구조분해 할당
 
@@ -28,7 +29,7 @@
   9장 에서는 나오지 않았지만 배열도 다음과 같이 줄여서 쓸 수 있다.
 
     const array = [1,2,5];
-    const [one ,two five] = array; // 다음 세 줄을 이렇게 표현할 수 있다.
+    const [one ,two , five] = array; // 다음 세 줄을 이렇게 표현할 수 있다.
     const one = array[0];
     const two = array[1];
     const five = array[2];
